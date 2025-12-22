@@ -1,0 +1,341 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+/// =======================
+/// OOP - MODEL
+/// =======================
+
+class Book {
+  final String _title;
+  Person? _borrower;
+
+  Book(this._title);
+
+  String get title => _title;
+  Person? get borrower => _borrower;
+  bool get isBorrowed => _borrower != null;
+
+  void borrow(Person person) {
+    _borrower = person;
+  }
+
+  void returnBook() {
+    _borrower = null;
+  }
+}
+
+abstract class BorrowAction {
+  void borrowBook(Book book);
+}
+
+class Person {
+  String name;
+  Person(this.name);
+}
+
+class Student extends Person implements BorrowAction {
+  Student(String name) : super(name);
+
+  @override
+  void borrowBook(Book book) {
+    book.borrow(this);
+  }
+}
+
+/// =======================
+/// APP
+/// =======================
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int index = 0;
+
+  final List<Book> books = [
+    Book('Sách 01'),
+    Book('Sách 02'),
+  ];
+
+  final List<Student> users = [
+    Student('Nguyễn Văn A'),
+    Student('Nguyễn Văn B'),
+  ];
+
+  late Student selectedUser;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedUser = users.first;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screens = [
+      ManageScreen(
+        books: books,
+        users: users,
+        selectedUser: selectedUser,
+        onUserChanged: (u) => setState(() => selectedUser = u),
+        onUpdate: () => setState(() {}),
+      ),
+      BookScreen(books: books),
+      BorrowerScreen(books: books),
+    ];
+
+    return Scaffold(
+      body: screens[index],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: index,
+        onTap: (i) => setState(() => index = i),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Quản lý'),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'DS Sách'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Người mượn'),
+        ],
+      ),
+    );
+  }
+}
+
+/// =======================
+/// SCREEN: QUẢN LÝ (Thêm Nhân Viên + Thêm Sách)
+/// =======================
+
+class ManageScreen extends StatefulWidget {
+  final List<Book> books;
+  final List<Student> users;
+  final Student selectedUser;
+  final Function(Student) onUserChanged;
+  final VoidCallback onUpdate;
+
+  const ManageScreen({
+    super.key,
+    required this.books,
+    required this.users,
+    required this.selectedUser,
+    required this.onUserChanged,
+    required this.onUpdate,
+  });
+
+  @override
+  State<ManageScreen> createState() => _ManageScreenState();
+}
+
+class _ManageScreenState extends State<ManageScreen> {
+  final TextEditingController userController = TextEditingController();
+  final TextEditingController bookController = TextEditingController();
+
+  void _addUser() {
+    if (userController.text.isEmpty) return;
+
+    setState(() {
+      widget.users.add(Student(userController.text));
+      widget.onUserChanged(widget.users.last);
+    });
+
+    userController.clear();
+  }
+
+  void _addBook() {
+    if (bookController.text.isEmpty) return;
+
+    setState(() {
+      widget.books.add(Book(bookController.text));
+    });
+
+    bookController.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Quản lý thư viện')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// ===== THÊM NHÂN VIÊN =====
+            const Text('Nhân viên', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: userController,
+                    decoration: const InputDecoration(
+                      hintText: 'Nhập tên nhân viên',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _addUser,
+                  child: const Text('Thêm'),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            /// ===== THÊM SÁCH =====
+            const Text('Thêm sách', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: bookController,
+                    decoration: const InputDecoration(
+                      hintText: 'Nhập tên sách',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _addBook,
+                  child: const Text('Thêm'),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            /// ===== CHỌN NGƯỜI MƯỢN =====
+            const Text('Chọn người mượn', style: TextStyle(fontWeight: FontWeight.bold)),
+            DropdownButton<Student>(
+              value: widget.selectedUser,
+              isExpanded: true,
+              items: widget.users
+                  .map((u) => DropdownMenuItem(value: u, child: Text(u.name)))
+                  .toList(),
+              onChanged: (u) {
+                if (u != null) widget.onUserChanged(u);
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            /// ===== DANH SÁCH SÁCH =====
+            const Text('Danh sách sách', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.books.length,
+                itemBuilder: (_, i) {
+                  final book = widget.books[i];
+                  return Card(
+                    child: ListTile(
+                      title: Text(book.title),
+                      subtitle: Text(
+                        book.isBorrowed
+                            ? 'Đã mượn bởi: ${book.borrower!.name}'
+                            : 'Còn sách',
+                      ),
+                      trailing: ElevatedButton(
+                        onPressed: () {
+                          if (!book.isBorrowed) {
+                            widget.selectedUser.borrowBook(book);
+                          } else {
+                            book.returnBook();
+                          }
+                          widget.onUpdate();
+                        },
+                        child: Text(book.isBorrowed ? 'Trả' : 'Mượn'),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// =======================
+/// SCREEN: DS SÁCH
+/// =======================
+
+class BookScreen extends StatelessWidget {
+  final List<Book> books;
+  const BookScreen({super.key, required this.books});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Danh sách sách')),
+      body: ListView.builder(
+        itemCount: books.length,
+        itemBuilder: (_, i) {
+          final book = books[i];
+          return ListTile(
+            title: Text(book.title),
+            subtitle: Text(
+              book.isBorrowed
+                  ? 'Người mượn: ${book.borrower!.name}'
+                  : 'Chưa mượn',
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// =======================
+/// SCREEN: NGƯỜI MƯỢN
+/// =======================
+
+class BorrowerScreen extends StatelessWidget {
+  final List<Book> books;
+  const BorrowerScreen({super.key, required this.books});
+
+  @override
+  Widget build(BuildContext context) {
+    final borrowed = books.where((b) => b.isBorrowed).toList();
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Danh sách người mượn')),
+      body: borrowed.isEmpty
+          ? const Center(child: Text('Chưa có ai mượn sách'))
+          : ListView.builder(
+        itemCount: borrowed.length,
+        itemBuilder: (_, i) {
+          final book = borrowed[i];
+          return ListTile(
+            leading: const Icon(Icons.person),
+            title: Text(book.borrower!.name),
+            subtitle: Text('Mượn: ${book.title}'),
+          );
+        },
+      ),
+    );
+  }
+}
