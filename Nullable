@@ -1,0 +1,31 @@
+Tìm hiểu về Nullable?
+1. Nullable là gì?
+Trong Kotlin, nullable là biến có thể nhận giá trị null.
+Mặc định Kotlin không cho phép biến nhận null, muốn nhận null phải thêm dấu ?.
+Ví dụ:
+var name: String = "An"   // không null
+var email: String? = null // nullable
+2. Khi nào nên / không nên dùng Nullable
+Nên dùng nullable khi:
+•	Dữ liệu chưa có
+•	Dữ liệu từ API, database
+•	Trường không bắt buộc
+Không nên dùng nullable khi:
+•	Dữ liệu bắt buộc
+•	Giá trị luôn tồn tại (id, tên chính)
+3. Các cách xử lý null trong Kotlin
+Toán tử ? (Safe call):
+name?.length
+Toán tử ?: (Elvis):
+val result = name ?: "Chưa nhập tên"
+Hàm let:
+name?.let {
+    println(it)
+}
+Toán tử !!:
+name!!.length
+→ Nếu name null → ứng dụng bị crash.
+4. Ví dụ trong Android
+val name: String? = null
+val display = name ?: "Chưa nhập tên"
+→ Đảm bảo ứng dụng không bị lỗi khi giá trị null.
