@@ -43,7 +43,6 @@ class _NullableProfileScreenState extends State<NullableProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ===== NHẬP TÊN =====
             const Text(
               "Tên:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -63,7 +62,6 @@ class _NullableProfileScreenState extends State<NullableProfileScreen> {
 
             const SizedBox(height: 20),
 
-            // ===== NHẬP TUỔI =====
             const Text(
               "Tuổi:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -84,7 +82,6 @@ class _NullableProfileScreenState extends State<NullableProfileScreen> {
 
             const SizedBox(height: 30),
 
-            // ===== KẾT QUẢ HIỂN THỊ =====
             const Text(
               "Thông tin hiển thị:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
