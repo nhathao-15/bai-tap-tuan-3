@@ -4,9 +4,6 @@ void main() {
   runApp(const MyApp());
 }
 
-/// =======================
-/// OOP - MODEL
-/// =======================
 
 class Book {
   final String _title;
@@ -45,9 +42,6 @@ class Student extends Person implements BorrowAction {
   }
 }
 
-/// =======================
-/// APP
-/// =======================
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -118,9 +112,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-/// =======================
-/// SCREEN: QUẢN LÝ (Thêm Nhân Viên + Thêm Sách)
-/// =======================
 
 class ManageScreen extends StatefulWidget {
   final List<Book> books;
@@ -200,7 +191,7 @@ class _ManageScreenState extends State<ManageScreen> {
 
             const SizedBox(height: 20),
 
-            /// ===== THÊM SÁCH =====
+
             const Text('Thêm sách', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
             Row(
@@ -224,7 +215,6 @@ class _ManageScreenState extends State<ManageScreen> {
 
             const SizedBox(height: 20),
 
-            /// ===== CHỌN NGƯỜI MƯỢN =====
             const Text('Chọn người mượn', style: TextStyle(fontWeight: FontWeight.bold)),
             DropdownButton<Student>(
               value: widget.selectedUser,
@@ -239,7 +229,7 @@ class _ManageScreenState extends State<ManageScreen> {
 
             const SizedBox(height: 20),
 
-            /// ===== DANH SÁCH SÁCH =====
+
             const Text('Danh sách sách', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
 
@@ -279,9 +269,7 @@ class _ManageScreenState extends State<ManageScreen> {
   }
 }
 
-/// =======================
-/// SCREEN: DS SÁCH
-/// =======================
+
 
 class BookScreen extends StatelessWidget {
   final List<Book> books;
@@ -309,9 +297,7 @@ class BookScreen extends StatelessWidget {
   }
 }
 
-/// =======================
-/// SCREEN: NGƯỜI MƯỢN
-/// =======================
+
 
 class BorrowerScreen extends StatelessWidget {
   final List<Book> books;
